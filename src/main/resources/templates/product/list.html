@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title}, ~{::section})">
+<head>
+  <meta charset="UTF-8">
+  <title>Product List</title>
+</head>
+<body>
+
+<section>
+  <h3>Products</h3>
+
+  <div class="float-end">
+    <a href="/product/new" type="button" class="btn btn-primary btn-lg">Add New Product</a>
+  </div>
+
+  <br><br>
+
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Category</th>
+      <th>Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${products.empty}">
+      <td colspan="2">No Products Available</td>
+    </tr>
+    <tr th:each="pro : ${products}">
+      <td><span th:text="${pro.name}">Name</span></td>
+      <td><span th:text="${pro.description}">Description</span></td>
+      <td><span th:text="${pro.category?.name}">Category</span></td>
+      <td><span th:text="${pro.price}">Price</span></td>
+
+      <td>
+        <a th:href="@{'/product/edit/' + ${pro.id}}">Edit</a>
+      </td>
+
+      <td>
+        <a th:href="@{'/product/delete/' + ${pro.id}}">Delete</a>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+
+</body>
+</html>

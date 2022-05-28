@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title}, ~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <title>Add New Product</title>
+</head>
+<body>
+
+<section>
+    <h3>Add New Product</h3>
+
+    <form action="#" th:action="@{/product}" method="post" th:object="${product}">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Category</label>
+            <select class="form-select" th:field="*{categoryId}" id="category">
+                <option value=""></option>
+                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Name</label>
+            <input type="text" th:field="*{name}" class="form-control" id="exampleInputEmail1"
+                   aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputdescription" class="form-label">Description</label>
+            <input type="text" th:field="*{description}" class="form-control" id="exampleInputdescription">
+        </div>
+
+        <div class="mb-3">
+            <label for="exampleInputPrice" class="form-label">Price</label>
+            <input type="number" th:field="*{price}" class="form-control" id="exampleInputPrice">
+        </div>
+
+        <button type="submit" class="btn btn-primary">ADD</button>
+    </form>
+</section>
+
+</body>
+</html>
