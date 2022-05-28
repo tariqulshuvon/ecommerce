@@ -3,15 +3,14 @@ package com.shop.ecommerce.controller;
 import com.shop.ecommerce.forms.CategoryForm;
 import com.shop.ecommerce.model.Category;
 import com.shop.ecommerce.service.CategoryService;
-import org.dom4j.rule.Mode;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/category")
@@ -34,24 +33,33 @@ public class CategoryController {
     }
 
     @PostMapping
-    public String saveCategory(@ModelAttribute("category") CategoryForm ctg) {
+    public String saveCategory(@Valid @ModelAttribute("category") CategoryForm form, BindingResult result) {
+        categoryService.findByName(form.getName()).ifPresent(category ->
+                result.rejectValue("name", "error.category", form.getName() + " already exists"));
+
+        if (result.hasErrors()) {
+            return "category/form";
+        }
+
         categoryService.save(Category.builder()
-                .id(ctg.getId())
-                .name(ctg.getName())
-                .description(ctg.getDescription()).build());
+                .id(form.getId())
+                .name(form.getName())
+                .description(form.getDescription()).build());
         return "redirect:/category";
 
     }
 
     @GetMapping("/edit/{id}")
     public String showEditCategory(Model model, @PathVariable(name = "id") long id) {
-        Category ct = categoryService.findById(id);
-        CategoryForm form = CategoryForm.builder()
-                .id(ct.getId())
-                .name(ct.getName())
-                .description(ct.getDescription())
-                .build();
-        model.addAttribute("category", ct);
+        categoryService.findById(id).ifPresent(ct -> {
+            CategoryForm form = CategoryForm.builder()
+                    .id(ct.getId())
+                    .name(ct.getName())
+                    .description(ct.getDescription())
+                    .build();
+            model.addAttribute("category", form);
+        });
+
         return "category/form";
     }
 

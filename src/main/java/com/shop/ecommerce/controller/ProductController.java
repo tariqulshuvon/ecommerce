@@ -2,7 +2,6 @@ package com.shop.ecommerce.controller;
 
 
 import com.shop.ecommerce.forms.ProductForm;
-import com.shop.ecommerce.model.Category;
 import com.shop.ecommerce.model.Product;
 import com.shop.ecommerce.service.CategoryService;
 import com.shop.ecommerce.service.ProductService;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -40,14 +38,16 @@ public class ProductController {
 
     @PostMapping
     public String saveProduct(@ModelAttribute("product") ProductForm pf) {
-        Category category = categoryService.findById(pf.getCategoryId());
-        productService.save(Product.builder()
-                .id(pf.getId())
-                .category(category)
-                .name(pf.getName())
-                .description(pf.getDescription())
-                .price(pf.getPrice())
-                .build());
+        categoryService.findById(pf.getCategoryId()).ifPresent(category -> {
+            productService.save(Product.builder()
+                    .id(pf.getId())
+                    .category(category)
+                    .name(pf.getName())
+                    .description(pf.getDescription())
+                    .price(pf.getPrice())
+                    .build());
+        });
+
         return "redirect:/product";
     }
 
